@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <script src="jquery-2.1.0.min.js"></script>
+    <script>
+        var http = require('http');
+        var querystring=require('querystring');
+        var idnum = 0;
+        http.createServer(function(req, res ) {
+            var post = '';
+            req.on('data', function(chunk){
+                post += chunk;
+            });
+
+            req.on('end', function() {
+                post = querystring.parse(post);
+                console.log(post);
+                res.end();
+            });
+        }).listen(3000);
+        console.log("HTTP is starting at 3000!");
+
+        function send(){
+            var querystr=require('querystring');
+
+            var contents = querystr.stringify({
+                name: 'show'
+            });
+
+            var options = {
+                host: '127.0.0.1',
+                port: '3001',
+                path: '/action',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Length' : contents.length
+                }
+            };
+
+            var req = http.request(options, function(res) {
+                res.setEncoding('utf8');
+                res.on('data', function (data) {
+                    console.log(data);
+                });
+            });
+
+            req.write(contents);
+            req.end();
+        }
+    </script>
+  </head>
+  <body>
+    <div id="table"></div> 
+    <input name="input" id="input"></input>
+    <button onClick="send()">Enter</button>
+    <h1>Hello World!</h1>
+    We are using node.js at 3000 <script>document.write(process.version)</script>.
+  </body>
+</html>
