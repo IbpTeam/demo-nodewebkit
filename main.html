@@ -6,28 +6,30 @@
       <style rel="stylesheet" type="text/css" >  
       </style>  
       <script type="text/javascript">  
-        function getElem (id) {  
+        function getElem(id) {  
           return document.getElementById(id);  
         }  
       
-        function trimPX (_px) {  
+        function trimPX(_px) {  
           if(_px==null || _px=="")  
             return 0;  
           return parseInt(_px.substr(0, _px.lastIndexOf("px")));  
         }  
       
-        function hitInRect (hitX, hitY, rcLeft, rcTop, rcWidth, rcHeight) {  
+        function hitInRect(hitX, hitY, rcLeft, rcTop, rcWidth, rcHeight) {  
           return (hitX>=rcLeft && hitX<rcLeft+rcWidth && hitY>=rcTop && hitY<rcTop+rcHeight);  
         }  
       
-        function outerDiv () {  
+        function outerDiv() {  
           return getElem("_outerDiv");  
         }  
       
-        function imageDiv () {  
+        function imageDiv() {  
           return getElem("_imageDiv");  
         }  
-      
+        function showCoordinate(){
+          return getElem("_showCoordinate");
+        }  
         var dragging = false;  
         var startTop = 0; // top is a Key Word in Chrome and Opera  
         var startLeft = 0;  
@@ -36,7 +38,7 @@
       
         window.addEventListener("load", initPage, false);  
       
-        function initPage () {  
+        function initPage() {  
           outerDiv().addEventListener("mousedown", // start moving image  
             function (event) {  
               startTop = trimPX(imageDiv().style.top);  
@@ -47,7 +49,7 @@
               if (hitInRect(event.clientX, event.clientY, startLeft, startTop, width, height)) {  
                 dragging = true;  
                 dragPosX = event.clientX;  
-                dragPosY = event.clientY;  
+                dragPosY = event.clientY;
                 event.preventDefault(); // disable default behavior of browser  
               }  
             },  
@@ -59,7 +61,8 @@
               if (dragging){  
                 imageDiv().style.cursor="pointer";  
                 imageDiv().style.top = parseInt(startTop)+(event.clientY - dragPosY) + "px";  
-                imageDiv().style.left = parseInt(startLeft)+(event.clientX - dragPosX) + "px";  
+                imageDiv().style.left = parseInt(startLeft)+(event.clientX - dragPosX) + "px";
+                document.getElementById("_showCoordinate").innerHTML = "Coordinates: (" + imageDiv().style.top + ", " + imageDiv().style.left + ")"; 
               }  
               event.preventDefault();  
             },  
@@ -77,7 +80,8 @@
         }  
       </script>  
     </head>  
-    <body>  
+    <body>
+      <div id="_showCoordinate"></div>  
       <div id="_outerDiv">  
         <div id="_imageDiv" style="z-index:0; position:relative; top:0px; left:0px; width:640px; height:480px;">  
           <img id="_imageObj" src="./resources/images/splash.png"></img>  
