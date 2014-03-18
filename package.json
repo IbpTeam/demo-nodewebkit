@@ -1,0 +1,13 @@
+{
+    "main": "main.html",                              
+    "name": "nw-demo-drag",                                
+    "description": "demo app of node-webkit",         
+    "version": "0.1.0",                               
+    "keywords": [ "demo", "node-webkit" ],            
+    "window": {                       
+        "toolbar": true,                              
+        "width": 800,                                 
+        "height": 500,
+        "frame": true                                
+    }
+}
