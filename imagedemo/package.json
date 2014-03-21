@@ -5,8 +5,8 @@
     "version": "0.1.0",                               
     "keywords": [ "demo", "node-webkit" ],            
     "window": {                       
-        "toolbar": true,                              
-        "width": 800,                                 
+        "toolbar": false,                              
+        "width": 660,                                 
         "height": 500,
         "frame": true                                
     }

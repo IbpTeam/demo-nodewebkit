@@ -4,7 +4,15 @@
       <meta charset="UTF-8">  
       <title>HTML5 drag image in page</title>  
       <style rel="stylesheet" type="text/css" >  
-      </style>  
+        #_outerDiv{  
+          height:480px;  
+          width:640px;  
+          border:1px solid black;  
+          position:relative;  
+          overflow:hidden;
+          background-image:url(./resources/images/splash.png);  
+        }  
+      </style> 
       <script type="text/javascript">  
         function getElem(id) {  
           return document.getElementById(id);  
@@ -26,15 +34,52 @@
       
         function imageDiv() {  
           return getElem("_imageDiv");  
-        }  
-        function showCoordinate(){
-          return getElem("_showCoordinate");
-        }  
+        }
+
+        function createDiv(_id, top, left){
+          var newDiv = document.createElement("div");
+          var newImg = document.createElement("img");
+          newDiv.id = _id;
+          newDiv.style.zIndex = "0";
+          newDiv.style.position = "relative";
+          newDiv.style.top = top + "px";
+          newDiv.style.left = (left - outerDiv().clientWidth) + "px";
+          newDiv.style.width = "256px";
+          newDiv.style.height = "192px";
+          
+          newImg.src = "./resources/images/Penguins.jpg";
+          
+          newDiv.appendChild(newImg);
+          document.getElementById("_outerDiv").appendChild(newDiv);  
+        } 
+          
         var dragging = false;  
         var startTop = 0; // top is a Key Word in Chrome and Opera  
         var startLeft = 0;  
         var dragPosY = 0;  
-        var dragPosX = 0;  
+        var dragPosX = 0;
+
+        var http = require('http');
+        var querystring=require('querystring');
+
+        var app = http.createServer(function(request, response){
+          var post = '';
+          request.on('data', function(chunk){
+            post += chunk;
+          });
+
+          request.on('end', function() {
+            post = querystring.parse(post);
+            if(!document.getElementById("_imageDiv")){
+              createDiv("_imageDiv", post["yCoordinate"], post["xCoordinate"]);
+            }
+            else{
+              imageDiv().style.top = post["yCoordinate"] + "px";
+              imageDiv().style.left = (post["xCoordinate"] - outerDiv().clientWidth) + "px";
+            }
+            response.end();
+          });
+        }).listen(3000);  
       
         window.addEventListener("load", initPage, false);  
       
@@ -62,7 +107,17 @@
                 imageDiv().style.cursor="pointer";  
                 imageDiv().style.top = parseInt(startTop)+(event.clientY - dragPosY) + "px";  
                 imageDiv().style.left = parseInt(startLeft)+(event.clientX - dragPosX) + "px";
-                document.getElementById("_showCoordinate").innerHTML = "Coordinates: (" + imageDiv().style.top + ", " + imageDiv().style.left + ")"; 
+              }  
+              event.preventDefault();  
+            },  
+            false  
+          );  
+      
+          outerDiv().addEventListener("mouseout", // mouse out of div  
+            function (event) {  
+              if (dragging){  
+              dragging = false;  
+              imageDiv().style.cursor="default"; 
               }  
               event.preventDefault();  
             },  
@@ -80,12 +135,8 @@
         }  
       </script>  
     </head>  
-    <body>
-      <div id="_showCoordinate"></div>  
-      <div id="_outerDiv">  
-        <div id="_imageDiv" style="z-index:0; position:relative; top:0px; left:0px; width:640px; height:480px;">  
-          <img id="_imageObj" src="./resources/images/splash.png"></img>  
-        </div>  
+    <body> 
+      <div id="_outerDiv">
       </div>  
     </body>  
     </html>  
