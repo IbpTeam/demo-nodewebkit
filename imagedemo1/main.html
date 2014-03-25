@@ -26,7 +26,11 @@
       
         function hitInRect(hitX, hitY, rcLeft, rcTop, rcWidth, rcHeight) {  
           return (hitX>=rcLeft && hitX<rcLeft+rcWidth && hitY>=rcTop && hitY<rcTop+rcHeight);  
-        }  
+        }
+
+        function outOfDiv(xCoordinate, yCoordinate){
+          return (xCoordinate < 0);
+        }   
       
         function outerDiv() {  
           return getElem("_outerDiv");  
@@ -51,6 +55,38 @@
           
           newDiv.appendChild(newImg);
           document.getElementById("_outerDiv").appendChild(newDiv);  
+        }
+
+        var http = require('http');
+        var querystring=require('querystring');
+
+        function send(xCoordinate, yCoordinate){
+            var querystr=require('querystring');
+
+            var contents = querystr.stringify({
+                xCoordinate: xCoordinate,
+                yCoordinate: yCoordinate
+            });
+
+            var options = {
+                host: 'localhost',
+                port: '3001',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Length' : contents.length
+                }
+            };
+
+            var req = http.request(options, function(res) {
+                res.setEncoding('utf8');
+                res.on('data', function (data) {
+                    console.log(data);
+                });
+            });
+
+            req.write(contents);
+            req.end();
         } 
           
         var dragging = false;  
@@ -103,10 +139,16 @@
       
           outerDiv().addEventListener("mousemove", // moving image  
             function (event) {  
-              if (dragging){  
-                imageDiv().style.cursor="pointer";  
-                imageDiv().style.top = parseInt(startTop)+(event.clientY - dragPosY) + "px";  
-                imageDiv().style.left = parseInt(startLeft)+(event.clientX - dragPosX) + "px";
+              if (dragging){
+                var xCoordinate, yCoordinate;  
+                imageDiv().style.cursor="pointer";
+                yCoordinate = parseInt(startTop)+(event.clientY - dragPosY);
+                xCoordinate = parseInt(startLeft)+(event.clientX - dragPosX);
+                imageDiv().style.top = yCoordinate + "px";
+                imageDiv().style.left = xCoordinate + "px";
+                if (outOfDiv(xCoordinate, yCoordinate)){
+                  send(xCoordinate, yCoordinate); 
+                }
               }  
               event.preventDefault();  
             },  

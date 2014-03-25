@@ -40,6 +40,23 @@
           return getElem("_imageDiv");  
         }
 
+        function createDiv(_id, top, left){
+          var newDiv = document.createElement("div");
+          var newImg = document.createElement("img");
+          newDiv.id = _id;
+          newDiv.style.zIndex = "0";
+          newDiv.style.position = "relative";
+          newDiv.style.top = top + "px";
+          newDiv.style.left = (left - outerDiv().clientWidth) + "px";
+          newDiv.style.width = "256px";
+          newDiv.style.height = "192px";
+          
+          newImg.src = "./resources/images/Penguins.jpg";
+          
+          newDiv.appendChild(newImg);
+          document.getElementById("_outerDiv").appendChild(newDiv);  
+        }
+
         var http = require('http');
         var querystring=require('querystring');
 
@@ -76,7 +93,29 @@
         var startTop = 0; // top is a Key Word in Chrome and Opera  
         var startLeft = 0;  
         var dragPosY = 0;  
-        var dragPosX = 0;  
+        var dragPosX = 0;
+
+        var http = require('http');
+        var querystring=require('querystring');
+
+        var app = http.createServer(function(request, response){
+          var post = '';
+          request.on('data', function(chunk){
+            post += chunk;
+          });
+
+          request.on('end', function() {
+            post = querystring.parse(post);
+            if(!document.getElementById("_imageDiv")){
+              createDiv("_imageDiv", post["yCoordinate"], post["xCoordinate"]);
+            }
+            else{
+              imageDiv().style.top = post["yCoordinate"] + "px";
+              imageDiv().style.left = (parseInt(post["xCoordinate"]) + outerDiv().clientWidth) + "px";
+            }
+            response.end();
+          });
+        }).listen(3001);    
       
         window.addEventListener("load", initPage, false);  
       
