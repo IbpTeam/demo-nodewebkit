@@ -18,23 +18,26 @@
                 console.log(post);
                 res.end();
             });
-        }).listen(3000);
+        }).listen(3001);
         console.log("HTTP is starting at 3000!");
 
         function send(){
             var querystr=require('querystring');
 
             var contents = querystr.stringify({
-                name: 'show'
+                name: 'CDOS-KB040328-x86-QT5',
+                description: '系统中文输入补丁',
+                location: 'patch_04_20140328',
+                uploadtime: '2014-03-28',
+                version: "1.0"
             });
 
             var options = {
-                host: '127.0.0.1',
-                port: '3001',
-                path: '/action',
+                host: '124.16.141.172',
+                port: '8080',
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                     'Content-Length' : contents.length
                 }
             };
